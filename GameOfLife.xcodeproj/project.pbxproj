@@ -1,0 +1,492 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C9FF29E118E666B900590E58 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF29E018E666B900590E58 /* Foundation.framework */; };
+		C9FF29E318E666B900590E58 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF29E218E666B900590E58 /* CoreGraphics.framework */; };
+		C9FF29E518E666B900590E58 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF29E418E666B900590E58 /* UIKit.framework */; };
+		C9FF29EB18E666B900590E58 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FF29E918E666B900590E58 /* InfoPlist.strings */; };
+		C9FF29ED18E666B900590E58 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FF29EC18E666B900590E58 /* main.m */; };
+		C9FF29F118E666B900590E58 /* MVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FF29F018E666B900590E58 /* MVAppDelegate.m */; };
+		C9FF29F418E666B900590E58 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9FF29F218E666B900590E58 /* Main_iPhone.storyboard */; };
+		C9FF29F718E666B900590E58 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9FF29F518E666B900590E58 /* Main_iPad.storyboard */; };
+		C9FF29FA18E666BA00590E58 /* MVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FF29F918E666BA00590E58 /* MVViewController.m */; };
+		C9FF29FC18E666BA00590E58 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9FF29FB18E666BA00590E58 /* Images.xcassets */; };
+		C9FF2A0318E666BA00590E58 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF2A0218E666BA00590E58 /* XCTest.framework */; };
+		C9FF2A0418E666BA00590E58 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF29E018E666B900590E58 /* Foundation.framework */; };
+		C9FF2A0518E666BA00590E58 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FF29E418E666B900590E58 /* UIKit.framework */; };
+		C9FF2A0D18E666BA00590E58 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9FF2A0B18E666BA00590E58 /* InfoPlist.strings */; };
+		C9FF2A0F18E666BA00590E58 /* GameOfLifeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FF2A0E18E666BA00590E58 /* GameOfLifeTests.m */; };
+		C9FF2A1A18E666E300590E58 /* Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FF2A1918E666E300590E58 /* Cell.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9FF2A0618E666BA00590E58 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9FF29D518E666B900590E58 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9FF29DC18E666B900590E58;
+			remoteInfo = GameOfLife;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C9FF29DD18E666B900590E58 /* GameOfLife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameOfLife.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9FF29E018E666B900590E58 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C9FF29E218E666B900590E58 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		C9FF29E418E666B900590E58 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		C9FF29E818E666B900590E58 /* GameOfLife-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GameOfLife-Info.plist"; sourceTree = "<group>"; };
+		C9FF29EA18E666B900590E58 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C9FF29EC18E666B900590E58 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C9FF29EE18E666B900590E58 /* GameOfLife-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfLife-Prefix.pch"; sourceTree = "<group>"; };
+		C9FF29EF18E666B900590E58 /* MVAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVAppDelegate.h; sourceTree = "<group>"; };
+		C9FF29F018E666B900590E58 /* MVAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVAppDelegate.m; sourceTree = "<group>"; };
+		C9FF29F318E666B900590E58 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		C9FF29F618E666B900590E58 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		C9FF29F818E666B900590E58 /* MVViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVViewController.h; sourceTree = "<group>"; };
+		C9FF29F918E666BA00590E58 /* MVViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVViewController.m; sourceTree = "<group>"; };
+		C9FF29FB18E666BA00590E58 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		C9FF2A0118E666BA00590E58 /* GameOfLifeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfLifeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9FF2A0218E666BA00590E58 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		C9FF2A0A18E666BA00590E58 /* GameOfLifeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GameOfLifeTests-Info.plist"; sourceTree = "<group>"; };
+		C9FF2A0C18E666BA00590E58 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C9FF2A0E18E666BA00590E58 /* GameOfLifeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameOfLifeTests.m; sourceTree = "<group>"; };
+		C9FF2A1818E666E300590E58 /* Cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cell.h; sourceTree = "<group>"; };
+		C9FF2A1918E666E300590E58 /* Cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cell.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C9FF29DA18E666B900590E58 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF29E318E666B900590E58 /* CoreGraphics.framework in Frameworks */,
+				C9FF29E518E666B900590E58 /* UIKit.framework in Frameworks */,
+				C9FF29E118E666B900590E58 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9FF29FE18E666BA00590E58 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF2A0318E666BA00590E58 /* XCTest.framework in Frameworks */,
+				C9FF2A0518E666BA00590E58 /* UIKit.framework in Frameworks */,
+				C9FF2A0418E666BA00590E58 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C9FF29D418E666B900590E58 = {
+			isa = PBXGroup;
+			children = (
+				C9FF2A1818E666E300590E58 /* Cell.h */,
+				C9FF2A1918E666E300590E58 /* Cell.m */,
+				C9FF29E618E666B900590E58 /* GameOfLife */,
+				C9FF2A0818E666BA00590E58 /* GameOfLifeTests */,
+				C9FF29DF18E666B900590E58 /* Frameworks */,
+				C9FF29DE18E666B900590E58 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C9FF29DE18E666B900590E58 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF29DD18E666B900590E58 /* GameOfLife.app */,
+				C9FF2A0118E666BA00590E58 /* GameOfLifeTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9FF29DF18E666B900590E58 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF29E018E666B900590E58 /* Foundation.framework */,
+				C9FF29E218E666B900590E58 /* CoreGraphics.framework */,
+				C9FF29E418E666B900590E58 /* UIKit.framework */,
+				C9FF2A0218E666BA00590E58 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C9FF29E618E666B900590E58 /* GameOfLife */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF29EF18E666B900590E58 /* MVAppDelegate.h */,
+				C9FF29F018E666B900590E58 /* MVAppDelegate.m */,
+				C9FF29F218E666B900590E58 /* Main_iPhone.storyboard */,
+				C9FF29F518E666B900590E58 /* Main_iPad.storyboard */,
+				C9FF29F818E666B900590E58 /* MVViewController.h */,
+				C9FF29F918E666BA00590E58 /* MVViewController.m */,
+				C9FF29FB18E666BA00590E58 /* Images.xcassets */,
+				C9FF29E718E666B900590E58 /* Supporting Files */,
+			);
+			path = GameOfLife;
+			sourceTree = "<group>";
+		};
+		C9FF29E718E666B900590E58 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF29E818E666B900590E58 /* GameOfLife-Info.plist */,
+				C9FF29E918E666B900590E58 /* InfoPlist.strings */,
+				C9FF29EC18E666B900590E58 /* main.m */,
+				C9FF29EE18E666B900590E58 /* GameOfLife-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C9FF2A0818E666BA00590E58 /* GameOfLifeTests */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF2A0E18E666BA00590E58 /* GameOfLifeTests.m */,
+				C9FF2A0918E666BA00590E58 /* Supporting Files */,
+			);
+			path = GameOfLifeTests;
+			sourceTree = "<group>";
+		};
+		C9FF2A0918E666BA00590E58 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C9FF2A0A18E666BA00590E58 /* GameOfLifeTests-Info.plist */,
+				C9FF2A0B18E666BA00590E58 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9FF29DC18E666B900590E58 /* GameOfLife */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9FF2A1218E666BA00590E58 /* Build configuration list for PBXNativeTarget "GameOfLife" */;
+			buildPhases = (
+				C9FF29D918E666B900590E58 /* Sources */,
+				C9FF29DA18E666B900590E58 /* Frameworks */,
+				C9FF29DB18E666B900590E58 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GameOfLife;
+			productName = GameOfLife;
+			productReference = C9FF29DD18E666B900590E58 /* GameOfLife.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9FF2A0018E666BA00590E58 /* GameOfLifeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9FF2A1518E666BA00590E58 /* Build configuration list for PBXNativeTarget "GameOfLifeTests" */;
+			buildPhases = (
+				C9FF29FD18E666BA00590E58 /* Sources */,
+				C9FF29FE18E666BA00590E58 /* Frameworks */,
+				C9FF29FF18E666BA00590E58 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9FF2A0718E666BA00590E58 /* PBXTargetDependency */,
+			);
+			name = GameOfLifeTests;
+			productName = GameOfLifeTests;
+			productReference = C9FF2A0118E666BA00590E58 /* GameOfLifeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9FF29D518E666B900590E58 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = MV;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Matthew Voss";
+				TargetAttributes = {
+					C9FF2A0018E666BA00590E58 = {
+						TestTargetID = C9FF29DC18E666B900590E58;
+					};
+				};
+			};
+			buildConfigurationList = C9FF29D818E666B900590E58 /* Build configuration list for PBXProject "GameOfLife" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C9FF29D418E666B900590E58;
+			productRefGroup = C9FF29DE18E666B900590E58 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9FF29DC18E666B900590E58 /* GameOfLife */,
+				C9FF2A0018E666BA00590E58 /* GameOfLifeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C9FF29DB18E666B900590E58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF29F718E666B900590E58 /* Main_iPad.storyboard in Resources */,
+				C9FF29FC18E666BA00590E58 /* Images.xcassets in Resources */,
+				C9FF29F418E666B900590E58 /* Main_iPhone.storyboard in Resources */,
+				C9FF29EB18E666B900590E58 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9FF29FF18E666BA00590E58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF2A0D18E666BA00590E58 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C9FF29D918E666B900590E58 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF29ED18E666B900590E58 /* main.m in Sources */,
+				C9FF2A1A18E666E300590E58 /* Cell.m in Sources */,
+				C9FF29FA18E666BA00590E58 /* MVViewController.m in Sources */,
+				C9FF29F118E666B900590E58 /* MVAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9FF29FD18E666BA00590E58 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9FF2A0F18E666BA00590E58 /* GameOfLifeTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9FF2A0718E666BA00590E58 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9FF29DC18E666B900590E58 /* GameOfLife */;
+			targetProxy = C9FF2A0618E666BA00590E58 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C9FF29E918E666B900590E58 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9FF29EA18E666B900590E58 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		C9FF29F218E666B900590E58 /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9FF29F318E666B900590E58 /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		C9FF29F518E666B900590E58 /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9FF29F618E666B900590E58 /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		C9FF2A0B18E666BA00590E58 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9FF2A0C18E666BA00590E58 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C9FF2A1018E666BA00590E58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9FF2A1118E666BA00590E58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C9FF2A1318E666BA00590E58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GameOfLife/GameOfLife-Prefix.pch";
+				INFOPLIST_FILE = "GameOfLife/GameOfLife-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		C9FF2A1418E666BA00590E58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GameOfLife/GameOfLife-Prefix.pch";
+				INFOPLIST_FILE = "GameOfLife/GameOfLife-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		C9FF2A1618E666BA00590E58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GameOfLife.app/GameOfLife";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GameOfLife/GameOfLife-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "GameOfLifeTests/GameOfLifeTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		C9FF2A1718E666BA00590E58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GameOfLife.app/GameOfLife";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GameOfLife/GameOfLife-Prefix.pch";
+				INFOPLIST_FILE = "GameOfLifeTests/GameOfLifeTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C9FF29D818E666B900590E58 /* Build configuration list for PBXProject "GameOfLife" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9FF2A1018E666BA00590E58 /* Debug */,
+				C9FF2A1118E666BA00590E58 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9FF2A1218E666BA00590E58 /* Build configuration list for PBXNativeTarget "GameOfLife" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9FF2A1318E666BA00590E58 /* Debug */,
+				C9FF2A1418E666BA00590E58 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C9FF2A1518E666BA00590E58 /* Build configuration list for PBXNativeTarget "GameOfLifeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9FF2A1618E666BA00590E58 /* Debug */,
+				C9FF2A1718E666BA00590E58 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C9FF29D518E666B900590E58 /* Project object */;
+}
