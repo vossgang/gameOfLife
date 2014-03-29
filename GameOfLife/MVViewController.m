@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     
-    self.cellSize = 10;
+    self.cellSize = 11;
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     
@@ -41,7 +41,7 @@
         for (int column = 0; column < self.numberOfColumns; column++) {
             Cell *newCell = [[Cell alloc] initWithFrame:CGRectMake((column * self.cellSize), (row * self.cellSize), self.cellSize, self.cellSize)];
             newCell.layer.borderWidth = 1;
-            newCell.layer.borderColor = [[UIColor grayColor] CGColor];
+            newCell.layer.borderColor = [[UIColor darkGrayColor] CGColor];
             newCell.backgroundColor = [UIColor blackColor];
             [self.view addSubview:newCell];
             [columnArray addObject:newCell];
@@ -70,6 +70,18 @@
                                                     repeats:YES];
 }
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch *touch in touches) {
+        CGPoint touchPoint = [touch locationInView:self.view];
+        for (Cell *cell in self.view.subviews) {
+            if (CGRectContainsPoint(cell.frame, touchPoint)) {
+                cell.isAlive = true;
+                cell.backgroundColor = [UIColor blueColor];
+            }
+        }
+    }
+}
+
 
 
 - (void)checkForLife
@@ -86,22 +98,22 @@
                 if ([self.cells[row - 1][column - 1] isAlive]) {
                     numberOfLiveNeighbors++;
                 }
-                if ([self.cells[row - 1][column] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row - 1][column + 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row][column - 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
                 if ([self.cells[row][column - 1] isAlive]) {
                     numberOfLiveNeighbors++;
                 }
                 if ([self.cells[row + 1][column - 1] isAlive]) {
                     numberOfLiveNeighbors++;
                 }
+                if ([self.cells[row - 1][column] isAlive]) {
+                    numberOfLiveNeighbors++;
+                }
                 if ([self.cells[row + 1][column] isAlive]) {
+                    numberOfLiveNeighbors++;
+                }
+                if ([self.cells[row - 1][column + 1] isAlive]) {
+                    numberOfLiveNeighbors++;
+                }
+                if ([self.cells[row][column + 1] isAlive]) {
                     numberOfLiveNeighbors++;
                 }
                 if ([self.cells[row + 1][column + 1] isAlive]) {
