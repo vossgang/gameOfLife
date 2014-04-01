@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Cell : UIView
+@interface Cell : NSObject
 
 @property (nonatomic) bool isAlive;
 @property (nonatomic) bool shouldBeAlive;
 @property (nonatomic) int row;
 @property (nonatomic) int column;
+@property (nonatomic, strong) UIView *cellView;
 
 @end

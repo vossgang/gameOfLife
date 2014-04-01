@@ -35,9 +35,10 @@
     [super viewDidLoad];
     
     NSMutableArray *check = [NSMutableArray new];
+    self.view.backgroundColor = [UIColor blackColor];
     
     self.iteration = 0;
-    self.cellSize = 3;
+    self.cellSize = 8;
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
@@ -49,17 +50,19 @@
     
     self.numberOfColumns = (screenRect.size.width / self.cellSize);
     self.numberOfRows = ((screenRect.size.height - 50) / self.cellSize);
-    NSLog(@"%ld", _numberOfColumns * _numberOfRows);
+    NSLog(@"%d", _numberOfColumns * _numberOfRows);
     NSMutableArray *rowArray = [NSMutableArray new];
     for (int row = 0; row < self.numberOfRows; row++) {
         NSMutableArray *columnArray = [NSMutableArray new];
         for (int column = 0; column < self.numberOfColumns; column++) {
-            Cell *newCell = [[Cell alloc] initWithFrame:CGRectMake((column * self.cellSize), (row * self.cellSize), self.cellSize, self.cellSize)];
-            newCell.row = row;
-            newCell.column = column;
-            newCell.backgroundColor = [UIColor blackColor];
-            [self.view addSubview:newCell];
-            [columnArray addObject:newCell];
+            Cell *thisCell = [Cell new];
+            thisCell.cellView = [[UIView alloc] initWithFrame:CGRectMake((column * self.cellSize), (row * self.cellSize), self.cellSize, self.cellSize)];
+            thisCell.cellView.layer.cornerRadius = (_cellSize / 2.5);
+            thisCell.cellView.layer.masksToBounds = YES;
+            thisCell.row = row;
+            thisCell.column = column;
+            thisCell.cellView.backgroundColor = [UIColor blueColor];
+            [columnArray addObject:thisCell];
         }
         [rowArray addObject:columnArray];
     }
@@ -68,7 +71,7 @@
     _cellsToCheck = check;
     
     
-    CGPoint here = CGPointMake(2, 20);
+    CGPoint here = CGPointMake(1, 20);
     [self insertGliderGunAtPoint:here];
     
 	// Do any additional setup after loading the view, typically from a nib.
@@ -76,7 +79,7 @@
 
 -(void)setUpTimer
 {
-    self.lifeCheck = [NSTimer scheduledTimerWithTimeInterval:.05
+    self.lifeCheck = [NSTimer scheduledTimerWithTimeInterval:.25
                                                       target:self
                                                     selector:@selector(checkForLife)
                                                     userInfo:nil
@@ -97,51 +100,21 @@
                 self.pause.backgroundColor = [UIColor redColor];
                 }
         } else {
-            for (Cell *cell in self.view.subviews) {
-                if (CGRectContainsPoint(cell.frame, touchPoint)) {
-                    int row = cell.row;
-                    int col = cell.column;
-                    
-                    
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col-1]];
-                    [_cellsToCheck addObject:_cells[row-1][col-1]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col]];
-                    [_cellsToCheck addObject:_cells[row-1][col]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col+1]];
-                    [_cellsToCheck addObject:_cells[row-1][col+1]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col-1]];
-                    [_cellsToCheck addObject:_cells[row][col-1]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col]];
-                    [_cellsToCheck addObject:_cells[row][col]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col+1]];
-                    [_cellsToCheck addObject:_cells[row][col+1]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col-1]];
-                    [_cellsToCheck addObject:_cells[row+1][col-1]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col]];
-                    [_cellsToCheck addObject:_cells[row+1][col]];
-                    
-                    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col+1]];
-                    [_cellsToCheck addObject:_cells[row+1][col+1]];
-                    
-                    if (cell.isAlive) {
-                        cell.isAlive = false;
-                        cell.backgroundColor = [UIColor blackColor];
-                    } else {
-                        cell.isAlive = true;
-                        cell.backgroundColor = [UIColor blueColor];
-                    }
+            int row = (touchPoint.y / _cellSize);
+            int col = (touchPoint.x / _cellSize);
+            
+            Cell *cell = _cells[row][col];
+            
+                if (cell.isAlive) {
+                    cell.isAlive = false;
+                    [cell.cellView removeFromSuperview];
+                } else {
+                    [self insertGliderGunAtPoint:CGPointMake(cell.column, cell.row)];
                 }
             }
+        
         }
-    }
+    
 }
 
 
@@ -159,32 +132,19 @@
         
             int numberOfLiveNeighbors = 0;
             Cell *thisCell = _cells[row][column];
+        
+        
             if ((column > 0) && (row > 0) && (column < (_numberOfColumns - 2)) && (row < (_numberOfRows - 2))) {
 
-                if ([self.cells[row - 1][column - 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row - 1][column] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row - 1][column + 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row][column - 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row][column + 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row + 1][column - 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row + 1][column] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
-                if ([self.cells[row + 1][column + 1] isAlive]) {
-                    numberOfLiveNeighbors++;
-                }
+                numberOfLiveNeighbors  = [self.cells[row - 1][column - 1] isAlive] +
+                                         [self.cells[row - 1][column] isAlive] +
+                                         [self.cells[row - 1][column + 1] isAlive] +
+                                         [self.cells[row][column - 1] isAlive] +
+                                         [self.cells[row][column + 1] isAlive] +
+                                         [self.cells[row + 1][column - 1] isAlive] +
+                                         [self.cells[row + 1][column] isAlive] +
+                                         [self.cells[row + 1][column + 1] isAlive];
+
                 switch (numberOfLiveNeighbors) {
                     case 2:
                         if ([_cells[row][column] isAlive]) {
@@ -223,44 +183,15 @@
     self.iteration++;
     
     [_cellsToCheck removeAllObjects];
- //   [_cellsToCheck addObject:_cells[0][0]];
     
     for (Cell *upDatedCell in _cellsToUpDate) {
-        int row = upDatedCell.row;
-        int col = upDatedCell.column;
-//
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col-1]];
-        [_cellsToCheck addObject:_cells[row-1][col-1]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col]];
-        [_cellsToCheck addObject:_cells[row-1][col]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col+1]];
-        [_cellsToCheck addObject:_cells[row-1][col+1]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row][col-1]];
-        [_cellsToCheck addObject:_cells[row][col-1]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row][col]];
-        [_cellsToCheck addObject:_cells[row][col]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row][col+1]];
-        [_cellsToCheck addObject:_cells[row][col+1]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col-1]];
-        [_cellsToCheck addObject:_cells[row+1][col-1]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col]];
-        [_cellsToCheck addObject:_cells[row+1][col]];
-        
-        [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col+1]];
-        [_cellsToCheck addObject:_cells[row+1][col+1]];
-        
         if (upDatedCell.shouldBeAlive) {
+            [self checkCellsthatSurrond:upDatedCell];
             upDatedCell.isAlive = true;
-            upDatedCell.backgroundColor = [UIColor blueColor];
+            [upDatedCell.cellView removeFromSuperview];
+            [self.view addSubview:upDatedCell.cellView];
         } else {
-            upDatedCell.backgroundColor = [UIColor blackColor];
+            [upDatedCell.cellView removeFromSuperview];
             upDatedCell.isAlive = false;
         }
     }
@@ -269,6 +200,39 @@
 }
 
 
+-(void)checkCellsthatSurrond:(Cell *)thisCell
+{
+    int row = thisCell.row;
+    int col = thisCell.column;
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col-1]];
+    [_cellsToCheck addObject:_cells[row-1][col-1]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col]];
+    [_cellsToCheck addObject:_cells[row-1][col]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row-1][col+1]];
+    [_cellsToCheck addObject:_cells[row-1][col+1]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col-1]];
+    [_cellsToCheck addObject:_cells[row][col-1]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col]];
+    [_cellsToCheck addObject:_cells[row][col]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row][col+1]];
+    [_cellsToCheck addObject:_cells[row][col+1]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col-1]];
+    [_cellsToCheck addObject:_cells[row+1][col-1]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col]];
+    [_cellsToCheck addObject:_cells[row+1][col]];
+    
+    [_cellsToCheck removeObjectIdenticalTo:_cells[row+1][col+1]];
+    [_cellsToCheck addObject:_cells[row+1][col+1]];
+
+}
 
 -(void)insertGliderGunAtPoint:(CGPoint)point
 {
@@ -281,153 +245,147 @@
     
     thisCell = _cells[row][col + 24];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 1][col + 22];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 1][col + 24];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 12];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 13];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 20];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 21];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 34];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 35];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 11];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 15];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 20];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 21];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
 
     thisCell = _cells[row + 3][col + 34];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 35];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 1];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 10];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 16];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 20];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 21];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
-    
+      [self checkCellsthatSurrond:thisCell];
+
     thisCell = _cells[row + 5][col + 1];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 10];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 14];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 16];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 17];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 22];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 24];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 10];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 16];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 24];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 7][col + 11];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 7][col + 15];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
  
     thisCell = _cells[row + 8][col + 12];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
+      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 8][col + 13];
     thisCell.isAlive = true;
-    thisCell.backgroundColor = [UIColor blueColor];
-    
-    for (int r = 0; r < 10; r++) {
-        for (int c = 0; c < 37; c++) {
-            [_cellsToCheck addObject:_cells[row + r][col + c]];
-        }
-    }
+      [self checkCellsthatSurrond:thisCell];
 
   }
     
