@@ -11,5 +11,8 @@
 @interface Cell : UIView
 
 @property (nonatomic) bool isAlive;
+@property (nonatomic) bool shouldBeAlive;
+@property (nonatomic) int row;
+@property (nonatomic) int column;
 
 @end
