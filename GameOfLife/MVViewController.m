@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSTimer *lifeCheck;
 @property (nonatomic, strong) UIView *pause;
 @property (nonatomic, strong) UILabel *pauseLabel;
+@property (nonatomic, strong) UILabel *clearLabel;
 
 
 @end
@@ -38,19 +39,25 @@
     self.view.backgroundColor = [UIColor blackColor];
     
     self.iteration = 0;
-    self.cellSize = 8;
+    self.cellSize = 6;
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
     self.pause.backgroundColor = [UIColor greenColor];
     [self.view addSubview:self.pause];
-    self.pauseLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
+    
+    self.pauseLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, screenRect.size.height - 50, screenRect.size.width - 30, 50)];
     self.pauseLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:self.pauseLabel];
     
+    self.clearLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, 30, 50)];
+    self.clearLabel.textAlignment = NSTextAlignmentCenter;
+    self.clearLabel.text = @"X";
+    [self.view addSubview:self.clearLabel];
+    
     self.numberOfColumns = (screenRect.size.width / self.cellSize);
     self.numberOfRows = ((screenRect.size.height - 50) / self.cellSize);
-    NSLog(@"%d", _numberOfColumns * _numberOfRows);
+    NSLog(@"%ld", _numberOfColumns * _numberOfRows);
     NSMutableArray *rowArray = [NSMutableArray new];
     for (int row = 0; row < self.numberOfRows; row++) {
         NSMutableArray *columnArray = [NSMutableArray new];
@@ -62,6 +69,8 @@
             thisCell.row = row;
             thisCell.column = column;
             thisCell.cellView.backgroundColor = [UIColor blueColor];
+            [self.view addSubview:thisCell.cellView];
+            [thisCell.cellView setHidden:YES];
             [columnArray addObject:thisCell];
         }
         [rowArray addObject:columnArray];
@@ -71,8 +80,59 @@
     _cellsToCheck = check;
     
     
-    CGPoint here = CGPointMake(1, 20);
-    [self insertGliderGunAtPoint:here];
+    CGPoint here = CGPointMake(6, 20);
+    [self insertBatPoint:here];
+    here = CGPointMake(12, 20);
+    [self insertYatPoint:here];
+    
+    here = CGPointMake(6, 27);
+    [self insertCatPoint:here];
+    here = CGPointMake(12, 27);
+    [self insertHatPoint:here];
+    here = CGPointMake(18, 27);
+    [self insertRatPoint:here];
+    here = CGPointMake(24, 27);
+    [self insertIatPoint:here];
+    here = CGPointMake(30, 27);
+    [self insertSatPoint:here];
+    
+    here = CGPointMake(6, 34);
+    [self insertCatPoint:here];
+    here = CGPointMake(12, 34);
+    [self insertOatPoint:here];
+    here = CGPointMake(18, 34);
+    [self insertHatPoint:here];
+    here = CGPointMake(24, 34);
+    [self insertEatPoint:here];
+    here = CGPointMake(30, 34);
+    [self insertNatPoint:here];
+
+    here = CGPointMake(12, 41);
+    [self insertAatPoint:here];
+    here = CGPointMake(18, 41);
+    [self insertNatPoint:here];
+    here = CGPointMake(24, 41);
+    [self insertDatPoint:here];
+    
+    here = CGPointMake(12, 48);
+    [self insertMatPoint:here];
+    here = CGPointMake(18, 48);
+    [self insertAatPoint:here];
+    here = CGPointMake(24, 48);
+    [self insertTatPoint:here];
+    here = CGPointMake(30, 48);
+    [self insertTatPoint:here];
+
+    here = CGPointMake(12, 55);
+    [self insertVatPoint:here];
+    here = CGPointMake(18, 55);
+    [self insertOatPoint:here];
+    here = CGPointMake(24, 55);
+    [self insertSatPoint:here];
+    here = CGPointMake(30, 55);
+    [self insertSatPoint:here];
+
+    
     
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -89,7 +149,16 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch *touch in touches) {
         CGPoint touchPoint = [touch locationInView:self.view];
-        if (CGRectContainsPoint(self.pause.frame, touchPoint)) {
+        
+        if (CGRectContainsPoint(self.clearLabel.frame, touchPoint)) {
+            [self removeAllLivingCells];
+            if ([self.lifeCheck isValid]) {
+                [self.lifeCheck invalidate];
+                self.pause.backgroundColor = [UIColor greenColor];;
+                _iteration = 0;
+                _pauseLabel.text = @" ";
+            }
+        } else if (CGRectContainsPoint(self.pause.frame, touchPoint)) {
             if ([self.lifeCheck isValid]) {
                 [self.lifeCheck invalidate];
                 self.pause.backgroundColor = [UIColor greenColor];;
@@ -114,6 +183,21 @@
             }
         
         }
+    
+}
+
+-(void)removeAllLivingCells
+{
+    for (int row = 0; row < _numberOfRows; row++) {
+        for (int col = 0; col < _numberOfColumns; col++) {
+            Cell *thisCell = _cells[row][col];
+            thisCell.isAlive = false;
+            thisCell.shouldBeAlive = false;
+            [thisCell.cellView setHidden:YES];
+            [_cellsToCheck removeObject:thisCell];
+            [_cellsToUpDate removeObject:thisCell];
+        }
+    }
     
 }
 
@@ -188,10 +272,13 @@
         if (upDatedCell.shouldBeAlive) {
             [self checkCellsthatSurrond:upDatedCell];
             upDatedCell.isAlive = true;
-            [upDatedCell.cellView removeFromSuperview];
-            [self.view addSubview:upDatedCell.cellView];
+            
+            if ([upDatedCell.cellView isHidden]) {
+                [upDatedCell.cellView setHidden:NO];
+            }
+            
         } else {
-            [upDatedCell.cellView removeFromSuperview];
+            [upDatedCell.cellView setHidden:YES];
             upDatedCell.isAlive = false;
         }
     }
@@ -245,152 +332,1690 @@
     
     thisCell = _cells[row][col + 24];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 1][col + 22];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 1][col + 24];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 12];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 13];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 20];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 21];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 34];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 2][col + 35];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 11];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 15];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 20];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 21];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
 
     thisCell = _cells[row + 3][col + 34];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 3][col + 35];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 1];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 10];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 16];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 20];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 4][col + 21];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
 
     thisCell = _cells[row + 5][col + 1];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 10];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 14];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 16];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 17];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 22];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 5][col + 24];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 10];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 16];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 6][col + 24];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 7][col + 11];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 7][col + 15];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
  
     thisCell = _cells[row + 8][col + 12];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
     
     thisCell = _cells[row + 8][col + 13];
     thisCell.isAlive = true;
-      [self checkCellsthatSurrond:thisCell];
 
+    for (int r = -1; r < 11; r++) {
+        for (int c = -1; c < 38; c++) {
+            Cell *checkCell = _cells[row + r][col + c];
+            [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+            [_cellsToCheck addObject:_cells[row + r][col + c]];
+            if (checkCell.isAlive) {
+                if ([checkCell.cellView isHidden]) {
+                    [checkCell.cellView setHidden:NO];
+                }
+            }
+        }
+    }
+
+      
   }
     
 }
 
+-(void)insertAatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
 
+    Cell *thisCell = [Cell new];
+
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 3];
+        thisCell.isAlive = true;
+ 
+        thisCell = _cells[row + 1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 1][col + 4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col + 2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col + 3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col + 4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 3][col + 4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 4][col + 4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+    }
+}
+
+-(void)insertBatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+    }
+    
+    for (int r = -1; r < 6; r++) {
+        for (int c = -1; c < 6; c++) {
+            Cell *checkCell = _cells[row + r][col + c];
+            [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+            [_cellsToCheck addObject:_cells[row + r][col + c]];
+            if (checkCell.isAlive) {
+                if ([checkCell.cellView isHidden]) {
+                    [checkCell.cellView setHidden:NO];
+                }
+            }
+        }
+    }
+}
+
+-(void)insertCatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+ 
+        thisCell = _cells[row][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 4][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 4][col + 2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row +4][col + 3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 4][col + 4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+
+        
+    }
+}
+
+-(void)insertDatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+-(void)insertEatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+    
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertFatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertGatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col + 1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertHatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertIatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 1][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertJatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertKatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertLatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertMatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertNatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertOatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertPatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertQatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertRatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertSatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertTatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertUatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+
+        thisCell = _cells[row + 1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertVatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row + 1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertWatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col];
+        thisCell.isAlive = true;
+
+        thisCell = _cells[row+3][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertXatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+-(void)insertYatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
+
+
+
+-(void)insertZatPoint:(CGPoint)here
+{
+    int row = here.y;
+    int col = here.x;
+    
+    Cell *thisCell = [Cell new];
+    if ((row < _numberOfRows - 6) && (col < _numberOfColumns - 6)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row][col+4];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+1][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+2][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+3][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+1];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+2];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+3];
+        thisCell.isAlive = true;
+        
+        thisCell = _cells[row+4][col+4];
+        thisCell.isAlive = true;
+        
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
+                    if ([checkCell.cellView isHidden]) {
+                        [checkCell.cellView setHidden:NO];
+                    }
+                }
+            }
+        }
+        
+        
+    }
+}
 
 @end
