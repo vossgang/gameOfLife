@@ -26,7 +26,6 @@
 @property (nonatomic, strong) UILabel *pauseLabel;
 @property (nonatomic, strong) UILabel *clearLabel;
 
-
 @end
 
 @implementation MVViewController
@@ -35,13 +34,16 @@
 {
     [super viewDidLoad];
     
-    NSMutableArray *check = [NSMutableArray new];
     self.view.backgroundColor = [UIColor blackColor];
-    
     self.iteration = 0;
-    self.cellSize = 6;
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
+    if (screenRect.size.width > 400) {
+        self.cellSize = 10;
+    } else {
+        self.cellSize = 5;
+    }
+    
     self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
     self.pause.backgroundColor = [UIColor greenColor];
     [self.view addSubview:self.pause];
@@ -57,7 +59,16 @@
     
     self.numberOfColumns = (screenRect.size.width / self.cellSize);
     self.numberOfRows = ((screenRect.size.height - 50) / self.cellSize);
-    NSLog(@"%ld", _numberOfColumns * _numberOfRows);
+    NSLog(@"%d cells", _numberOfColumns * _numberOfRows);
+   	// Do any additional setup after loading the view, typically from a nib.
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    NSMutableArray *check = [NSMutableArray new];
+    
     NSMutableArray *rowArray = [NSMutableArray new];
     for (int row = 0; row < self.numberOfRows; row++) {
         NSMutableArray *columnArray = [NSMutableArray new];
@@ -78,9 +89,14 @@
     self.cells = rowArray;
     [check addObject:_cells[0][0]];
     _cellsToCheck = check;
-    
-    
+
+    [self putCedits];
+}
+
+-(void)putCedits
+{
     CGPoint here = CGPointMake(6, 20);
+ 
     [self insertBatPoint:here];
     here = CGPointMake(12, 20);
     [self insertYatPoint:here];
@@ -106,7 +122,7 @@
     [self insertEatPoint:here];
     here = CGPointMake(30, 34);
     [self insertNatPoint:here];
-
+    
     here = CGPointMake(12, 41);
     [self insertAatPoint:here];
     here = CGPointMake(18, 41);
@@ -122,7 +138,7 @@
     [self insertTatPoint:here];
     here = CGPointMake(30, 48);
     [self insertTatPoint:here];
-
+    
     here = CGPointMake(12, 55);
     [self insertVatPoint:here];
     here = CGPointMake(18, 55);
@@ -131,10 +147,6 @@
     [self insertSatPoint:here];
     here = CGPointMake(30, 55);
     [self insertSatPoint:here];
-
-    
-    
-	// Do any additional setup after loading the view, typically from a nib.
 }
 
 -(void)setUpTimer
@@ -143,7 +155,7 @@
                                                       target:self
                                                     selector:@selector(checkForLife)
                                                     userInfo:nil
-                                                    repeats:YES];
+                                                     repeats:YES];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -183,7 +195,6 @@
             }
         
         }
-    
 }
 
 -(void)removeAllLivingCells
@@ -198,10 +209,7 @@
             [_cellsToUpDate removeObject:thisCell];
         }
     }
-    
 }
-
-
 
 - (void)checkForLife
 {
@@ -286,7 +294,6 @@
 
 }
 
-
 -(void)checkCellsthatSurrond:(Cell *)thisCell
 {
     int row = thisCell.row;
@@ -320,6 +327,13 @@
     [_cellsToCheck addObject:_cells[row+1][col+1]];
 
 }
+
+//
+// the following code is just preset shapes
+// that can put put into the array at
+// a row and column in the array with
+// row = y and col = x
+//
 
 -(void)insertGliderGunAtPoint:(CGPoint)point
 {
@@ -444,14 +458,10 @@
             [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
             [_cellsToCheck addObject:_cells[row + r][col + c]];
             if (checkCell.isAlive) {
-                if ([checkCell.cellView isHidden]) {
-                    [checkCell.cellView setHidden:NO];
-                }
+                [checkCell.cellView setHidden:NO];
             }
         }
     }
-
-      
   }
     
 }
@@ -513,13 +523,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
     }
 }
 
@@ -578,15 +585,13 @@
         
         thisCell = _cells[row+4][col+3];
         thisCell.isAlive = true;
-    }
     
-    for (int r = -1; r < 6; r++) {
-        for (int c = -1; c < 6; c++) {
-            Cell *checkCell = _cells[row + r][col + c];
-            [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
-            [_cellsToCheck addObject:_cells[row + r][col + c]];
-            if (checkCell.isAlive) {
-                if ([checkCell.cellView isHidden]) {
+        for (int r = -1; r < 6; r++) {
+            for (int c = -1; c < 6; c++) {
+                Cell *checkCell = _cells[row + r][col + c];
+                [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
+                [_cellsToCheck addObject:_cells[row + r][col + c]];
+                if (checkCell.isAlive) {
                     [checkCell.cellView setHidden:NO];
                 }
             }
@@ -641,14 +646,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-
-        
     }
 }
 
@@ -708,13 +709,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-
     }
 }
 
@@ -771,21 +769,16 @@
         thisCell = _cells[row+4][col+4];
         thisCell.isAlive = true;
         
-    
         for (int r = -1; r < 6; r++) {
             for (int c = -1; c < 6; c++) {
                 Cell *checkCell = _cells[row + r][col + c];
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -836,14 +829,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -903,14 +892,11 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -960,23 +946,18 @@
         
         thisCell = _cells[row+4][col+4];
         thisCell.isAlive = true;
-        
-        
-        
+    
         for (int r = -1; r < 6; r++) {
             for (int c = -1; c < 6; c++) {
                 Cell *checkCell = _cells[row + r][col + c];
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1003,22 +984,17 @@
         thisCell = _cells[row+4][col+2];
         thisCell.isAlive = true;
         
-
-        
         for (int r = -1; r < 6; r++) {
             for (int c = -1; c < 6; c++) {
                 Cell *checkCell = _cells[row + r][col + c];
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1060,14 +1036,11 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1118,14 +1091,11 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1170,14 +1140,11 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
+
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1228,21 +1195,16 @@
         thisCell = _cells[row+4][col+4];
         thisCell.isAlive = true;
         
-        
         for (int r = -1; r < 6; r++) {
             for (int c = -1; c < 6; c++) {
                 Cell *checkCell = _cells[row + r][col + c];
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1299,14 +1261,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1360,14 +1318,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1421,14 +1375,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1485,14 +1435,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1552,14 +1498,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1616,14 +1558,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1668,14 +1606,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1726,14 +1660,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1778,14 +1708,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1843,14 +1769,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1895,14 +1817,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
@@ -1941,18 +1859,12 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
-
-
 
 -(void)insertZatPoint:(CGPoint)here
 {
@@ -2007,14 +1919,10 @@
                 [_cellsToCheck removeObjectIdenticalTo:_cells[row + r][col + c]];
                 [_cellsToCheck addObject:_cells[row + r][col + c]];
                 if (checkCell.isAlive) {
-                    if ([checkCell.cellView isHidden]) {
-                        [checkCell.cellView setHidden:NO];
-                    }
+                    [checkCell.cellView setHidden:NO];
                 }
             }
         }
-        
-        
     }
 }
 
