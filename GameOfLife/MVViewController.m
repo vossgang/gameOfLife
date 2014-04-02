@@ -41,7 +41,7 @@
     if (screenRect.size.width > 400) {
         self.cellSize = 10;
     } else {
-        self.cellSize = 5;
+        self.cellSize = 8;
     }
     
     self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
@@ -59,7 +59,7 @@
     
     self.numberOfColumns = (screenRect.size.width / self.cellSize);
     self.numberOfRows = ((screenRect.size.height - 50) / self.cellSize);
-    NSLog(@"%d cells", _numberOfColumns * _numberOfRows);
+    NSLog(@"%ld cells", _numberOfColumns * _numberOfRows);
    	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -163,13 +163,13 @@
         CGPoint touchPoint = [touch locationInView:self.view];
         
         if (CGRectContainsPoint(self.clearLabel.frame, touchPoint)) {
-            [self removeAllLivingCells];
             if ([self.lifeCheck isValid]) {
                 [self.lifeCheck invalidate];
                 self.pause.backgroundColor = [UIColor greenColor];;
                 _iteration = 0;
                 _pauseLabel.text = @" ";
             }
+            [self removeAllLivingCells];
         } else if (CGRectContainsPoint(self.pause.frame, touchPoint)) {
             if ([self.lifeCheck isValid]) {
                 [self.lifeCheck invalidate];
@@ -183,18 +183,19 @@
         } else {
             int row = (touchPoint.y / _cellSize);
             int col = (touchPoint.x / _cellSize);
-            
-            Cell *cell = _cells[row][col];
-            
+            if ((row < self.numberOfRows)&&(col < self.numberOfColumns)) {
+                Cell *cell = _cells[row][col];
                 if (cell.isAlive) {
                     cell.isAlive = false;
-                    [cell.cellView removeFromSuperview];
+                    [cell.cellView setHidden:YES];
                 } else {
-                    [self insertGliderGunAtPoint:CGPointMake(cell.column, cell.row)];
+                    cell.isAlive = true;
+                    [self checkCellsthatSurrond:cell];
+                    [cell.cellView setHidden:NO];
                 }
             }
-        
         }
+    }
 }
 
 -(void)removeAllLivingCells
