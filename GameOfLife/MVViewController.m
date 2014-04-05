@@ -22,12 +22,12 @@
 @property (nonatomic) NSInteger numberOfLiveCells;
 
 @property (nonatomic, strong) NSTimer *lifeCheck;
-@property (nonatomic, strong) UIView *pause;
+@property (nonatomic, strong) UIView  *pause;
 @property (nonatomic, strong) UILabel *pauseLabel;
 @property (nonatomic, strong) UILabel *clearLabel;
 
-@property (nonatomic) CGPoint insertCellAtPoint;
-@property (nonatomic) CGRect screenRect;
+@property (nonatomic) CGPoint cellInArray;
+@property (nonatomic) CGRect  screenRect;
 
 @end
 
@@ -165,8 +165,8 @@
                 }
         } else {
             
-            _insertCellAtPoint.x = touchPoint.x / _cellSize;
-            _insertCellAtPoint.y = touchPoint.y / _cellSize;
+            _cellInArray.x = touchPoint.x / _cellSize;
+            _cellInArray.y = touchPoint.y / _cellSize;
 
             UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Insert This"
                                                                      delegate:self
@@ -175,7 +175,7 @@
                                                             otherButtonTitles:@"Glider Gun", @"Turn On Cell", @"Hypno Pattern",@"Credits", nil];
             //make this the middle of the screen
             
-            CGRect middle = CGRectMake((_screenRect.size.height - 300), 0, 0, 0);
+            CGRect middle = CGRectMake((_screenRect.size.height - 300), 0, 10, 10);
 
             if (_screenRect.size.width > 320) {
                 middle.origin.x = touchPoint.x;
@@ -211,13 +211,13 @@
     NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
     
     if ([buttonTitle isEqualToString:@"Glider Gun"]) {
-        [self insertGliderGunAtPoint:_insertCellAtPoint];
+        [self insertGliderGunAtPoint:_cellInArray];
     } else if ([buttonTitle isEqualToString:@"Turn On Cell"]){
-        [self turnCellOnAt:_insertCellAtPoint];
+        [self turnCellOnAt:_cellInArray];
     } else if ([buttonTitle isEqualToString:@"Hypno Pattern"]){
-        [self putColumnGoingUpAt:_insertCellAtPoint columnLength:1];
+        [self putColumnGoingUpAt:_cellInArray columnLength:1];
     } else if ([buttonTitle isEqualToString:@"Credits"]){
-        [self putCeditsAt:_insertCellAtPoint];
+        [self putCeditsAt:_cellInArray];
     }
 }
 
@@ -314,7 +314,7 @@
             upDatedCell.isAlive = false;
         }
     }
-    self.pauseLabel.text = [NSString stringWithFormat:@"Iteration %ld Living %ld Checking %lu", (long)_iteration, (long)_numberOfLiveCells, (unsigned long)_cellsToCheck.count];
+    self.pauseLabel.text = [NSString stringWithFormat:@"Gen %ld Live %ld Check %lu", (long)_iteration, (long)_numberOfLiveCells, (unsigned long)_cellsToCheck.count];
 
 }
 
@@ -413,7 +413,7 @@
     int cellCounter = 0;
     Cell *thisCell = [Cell new];
     
-    while ((cellCounter < numberOfCells) &&  (row < _numberOfRows)) {
+    while ((cellCounter < numberOfCells) &&  (row < (_numberOfRows - 1))) {
         
         thisCell = _cells[row][col];
         thisCell.isAlive = true;
@@ -422,7 +422,7 @@
         cellCounter++;
         row++;
     }
-    if (row < _numberOfRows-1) {
+    if (row < (_numberOfRows - 1)) {
         point.y = row;
         [self putRowGoingRightAt:point rowLength:numberOfCells+1];
     }
@@ -436,7 +436,7 @@
     int cellCounter = 0;
     Cell *thisCell = [Cell new];
     
-    while ((cellCounter < numberOfCells) &&  (col < _numberOfColumns)) {
+    while ((cellCounter < numberOfCells) &&  (col < (_numberOfColumns - 1))) {
         thisCell = _cells[row][col];
         thisCell.isAlive = true;
         [thisCell.cellView setHidden:NO];
@@ -444,7 +444,7 @@
         cellCounter++;
         col++;
     }
-    if (col < _numberOfColumns-1) {
+    if (col < (_numberOfColumns - 1)) {
         point.x = col;
         [self putColumnGoingUpAt:point columnLength:numberOfCells+1];
     }
