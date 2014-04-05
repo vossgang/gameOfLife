@@ -9,7 +9,7 @@
 #import "MVViewController.h"
 #import "Cell.h"
 
-@interface MVViewController ()
+@interface MVViewController () <UIActionSheetDelegate>
 
 @property (nonatomic, strong) NSMutableArray *cells;
 @property (nonatomic, strong) NSMutableArray *cellsToUpDate;
@@ -26,6 +26,9 @@
 @property (nonatomic, strong) UILabel *pauseLabel;
 @property (nonatomic, strong) UILabel *clearLabel;
 
+@property (nonatomic) CGPoint insertCellAtPoint;
+@property (nonatomic) CGRect screenRect;
+
 @end
 
 @implementation MVViewController
@@ -37,29 +40,29 @@
     self.view.backgroundColor = [UIColor blackColor];
     self.iteration = 0;
     
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    if (screenRect.size.width > 400) {
+    _screenRect = [[UIScreen mainScreen] bounds];
+    if (_screenRect.size.width > 400) {
         self.cellSize = 10;
     } else {
-        self.cellSize = 8;
+        self.cellSize = 6;
     }
     
-    self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, screenRect.size.width, 50)];
+    self.pause = [[UIView alloc] initWithFrame:CGRectMake(0, _screenRect.size.height - 50, _screenRect.size.width, 50)];
     self.pause.backgroundColor = [UIColor greenColor];
     [self.view addSubview:self.pause];
     
-    self.pauseLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, screenRect.size.height - 50, screenRect.size.width - 30, 50)];
+    self.pauseLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, _screenRect.size.height - 50, _screenRect.size.width - 30, 50)];
     self.pauseLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:self.pauseLabel];
     
-    self.clearLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenRect.size.height - 50, 30, 50)];
+    self.clearLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _screenRect.size.height - 50, 30, 50)];
     self.clearLabel.textAlignment = NSTextAlignmentCenter;
     self.clearLabel.text = @"X";
     [self.view addSubview:self.clearLabel];
     
-    self.numberOfColumns = (screenRect.size.width / self.cellSize);
-    self.numberOfRows = ((screenRect.size.height - 50) / self.cellSize);
-    NSLog(@"%ld cells", _numberOfColumns * _numberOfRows);
+    self.numberOfColumns = (_screenRect.size.width / self.cellSize);
+    self.numberOfRows = ((_screenRect.size.height - 50) / self.cellSize);
+    NSLog(@"%d cells", _numberOfColumns * _numberOfRows);
    	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -90,63 +93,43 @@
     [check addObject:_cells[0][0]];
     _cellsToCheck = check;
 
-    [self putCedits];
+    CGPoint here = CGPointMake(6, 20);
+
+    
+    [self putCeditsAt:here];
 }
 
--(void)putCedits
+-(void)putCeditsAt:(CGPoint)here
 {
-    CGPoint here = CGPointMake(6, 20);
  
     [self insertBatPoint:here];
-    here = CGPointMake(12, 20);
-    [self insertYatPoint:here];
+    [self insertYatPoint:CGPointMake(here.x + 6, here.y)];
     
-    here = CGPointMake(6, 27);
-    [self insertCatPoint:here];
-    here = CGPointMake(12, 27);
-    [self insertHatPoint:here];
-    here = CGPointMake(18, 27);
-    [self insertRatPoint:here];
-    here = CGPointMake(24, 27);
-    [self insertIatPoint:here];
-    here = CGPointMake(30, 27);
-    [self insertSatPoint:here];
+    [self insertCatPoint:CGPointMake(here.x, here.y + 7)];
+    [self insertHatPoint:CGPointMake(here.x + 6, here.y + 7)];
+    [self insertRatPoint:CGPointMake(here.x + 12, here.y + 7)];
+    [self insertIatPoint:CGPointMake(here.x + 18, here.y + 7)];
+    [self insertSatPoint:CGPointMake(here.x + 24, here.y + 7)];
     
-    here = CGPointMake(6, 34);
-    [self insertCatPoint:here];
-    here = CGPointMake(12, 34);
-    [self insertOatPoint:here];
-    here = CGPointMake(18, 34);
-    [self insertHatPoint:here];
-    here = CGPointMake(24, 34);
-    [self insertEatPoint:here];
-    here = CGPointMake(30, 34);
-    [self insertNatPoint:here];
+    [self insertCatPoint:CGPointMake(here.x, here.y + 14)];
+    [self insertOatPoint:CGPointMake(here.x + 6, here.y + 14)];
+    [self insertHatPoint:CGPointMake(here.x + 12, here.y + 14)];
+    [self insertEatPoint:CGPointMake(here.x + 18, here.y + 14)];
+    [self insertNatPoint:CGPointMake(here.x + 24, here.y + 14)];
     
-    here = CGPointMake(12, 41);
-    [self insertAatPoint:here];
-    here = CGPointMake(18, 41);
-    [self insertNatPoint:here];
-    here = CGPointMake(24, 41);
-    [self insertDatPoint:here];
+    [self insertAatPoint:CGPointMake(here.x + 6, here.y + 21)];
+    [self insertNatPoint:CGPointMake(here.x + 12, here.y + 21)];
+    [self insertDatPoint:CGPointMake(here.x + 18, here.y + 21)];
     
-    here = CGPointMake(12, 48);
-    [self insertMatPoint:here];
-    here = CGPointMake(18, 48);
-    [self insertAatPoint:here];
-    here = CGPointMake(24, 48);
-    [self insertTatPoint:here];
-    here = CGPointMake(30, 48);
-    [self insertTatPoint:here];
+    [self insertMatPoint:CGPointMake(here.x + 6, here.y + 28)];
+    [self insertAatPoint:CGPointMake(here.x + 12, here.y + 28)];
+    [self insertTatPoint:CGPointMake(here.x + 18, here.y + 28)];
+    [self insertTatPoint:CGPointMake(here.x + 24, here.y + 28)];
     
-    here = CGPointMake(12, 55);
-    [self insertVatPoint:here];
-    here = CGPointMake(18, 55);
-    [self insertOatPoint:here];
-    here = CGPointMake(24, 55);
-    [self insertSatPoint:here];
-    here = CGPointMake(30, 55);
-    [self insertSatPoint:here];
+    [self insertVatPoint:CGPointMake(here.x + 6, here.y + 35)];
+    [self insertOatPoint:CGPointMake(here.x + 12, here.y + 35)];
+    [self insertSatPoint:CGPointMake(here.x + 18, here.y + 35)];
+    [self insertSatPoint:CGPointMake(here.x + 24, here.y + 35)];
 }
 
 -(void)setUpTimer
@@ -181,20 +164,60 @@
                 self.pause.backgroundColor = [UIColor redColor];
                 }
         } else {
-            int row = (touchPoint.y / _cellSize);
-            int col = (touchPoint.x / _cellSize);
-            if ((row < self.numberOfRows)&&(col < self.numberOfColumns)) {
-                Cell *cell = _cells[row][col];
-                if (cell.isAlive) {
-                    cell.isAlive = false;
-                    [cell.cellView setHidden:YES];
-                } else {
-                    cell.isAlive = true;
-                    [self checkCellsthatSurrond:cell];
-                    [cell.cellView setHidden:NO];
-                }
+            
+            _insertCellAtPoint.x = touchPoint.x / _cellSize;
+            _insertCellAtPoint.y = touchPoint.y / _cellSize;
+
+            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Insert This"
+                                                                     delegate:self
+                                                            cancelButtonTitle:@"Cancel"
+                                                       destructiveButtonTitle:nil
+                                                            otherButtonTitles:@"Glider Gun", @"Turn On Cell", @"Hypno Pattern",@"Credits", nil];
+            //make this the middle of the screen
+            
+            CGRect middle = CGRectMake((_screenRect.size.height - 300), 0, 0, 0);
+
+            if (_screenRect.size.width > 320) {
+                middle.origin.x = touchPoint.x;
+                middle.origin.y = touchPoint.y;
             }
+        
+            [actionSheet showFromRect:middle inView:self.view animated:YES];
+            
         }
+    }
+}
+
+-(void)turnCellOnAt:(CGPoint)point
+{
+    int row = point.y;
+    int col = point.x;
+    if ((row < self.numberOfRows)&&(col < self.numberOfColumns)) {
+        Cell *cell = _cells[row][col];
+        if (cell.isAlive) {
+            cell.isAlive = false;
+            [cell.cellView setHidden:YES];
+        } else {
+            cell.isAlive = true;
+            [self checkCellsthatSurrond:cell];
+            [cell.cellView setHidden:NO];
+        }
+    }
+    
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
+    
+    if ([buttonTitle isEqualToString:@"Glider Gun"]) {
+        [self insertGliderGunAtPoint:_insertCellAtPoint];
+    } else if ([buttonTitle isEqualToString:@"Turn On Cell"]){
+        [self turnCellOnAt:_insertCellAtPoint];
+    } else if ([buttonTitle isEqualToString:@"Hypno Pattern"]){
+        [self putColumnGoingUpAt:_insertCellAtPoint columnLength:1];
+    } else if ([buttonTitle isEqualToString:@"Credits"]){
+        [self putCeditsAt:_insertCellAtPoint];
     }
 }
 
@@ -273,7 +296,7 @@
 
 -(void)updateCellView
 {
-    self.iteration++;
+    _iteration++;
     
     [_cellsToCheck removeAllObjects];
     
@@ -335,6 +358,97 @@
 // a row and column in the array with
 // row = y and col = x
 //
+
+
+-(void)putColumnGoingUpAt:(CGPoint)point
+             columnLength:(int)numberOfCells
+{
+    int col = point.x;
+    int row = point.y;
+    int cellCounter = 0;
+    Cell *thisCell = [Cell new];
+    
+    while ((cellCounter < numberOfCells) &&  (row > 0)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        [thisCell.cellView setHidden:NO];
+        [self checkCellsthatSurrond:thisCell];
+        cellCounter++;
+        row--;
+    }
+    if (row > 0) {
+        point.y = row;
+        [self putRowGoingLeftAt:point rowLength:numberOfCells+1];
+    }
+}
+
+-(void)putRowGoingLeftAt:(CGPoint)point
+               rowLength:(int)numberOfCells
+{
+    int col = point.x;
+    int row = point.y;
+    int cellCounter = 0;
+    Cell *thisCell = [Cell new];
+    
+    while ((cellCounter < numberOfCells) &&  (col > 0)) {
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        [thisCell.cellView setHidden:NO];
+        [self checkCellsthatSurrond:thisCell];
+        cellCounter++;
+        col--;
+    }
+    if (col > 0) {
+        point.x = col;
+        [self putColumnGoingDownAt:point columnLength:numberOfCells+1];
+    }
+}
+
+-(void)putColumnGoingDownAt:(CGPoint)point
+             columnLength:(int)numberOfCells
+{
+    int col = point.x;
+    int row = point.y;
+    int cellCounter = 0;
+    Cell *thisCell = [Cell new];
+    
+    while ((cellCounter < numberOfCells) &&  (row < _numberOfRows)) {
+        
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        [thisCell.cellView setHidden:NO];
+        [self checkCellsthatSurrond:thisCell];
+        cellCounter++;
+        row++;
+    }
+    if (row < _numberOfRows-1) {
+        point.y = row;
+        [self putRowGoingRightAt:point rowLength:numberOfCells+1];
+    }
+}
+
+-(void)putRowGoingRightAt:(CGPoint)point
+               rowLength:(int)numberOfCells
+{
+    int col = point.x;
+    int row = point.y;
+    int cellCounter = 0;
+    Cell *thisCell = [Cell new];
+    
+    while ((cellCounter < numberOfCells) &&  (col < _numberOfColumns)) {
+        thisCell = _cells[row][col];
+        thisCell.isAlive = true;
+        [thisCell.cellView setHidden:NO];
+        [self checkCellsthatSurrond:thisCell];
+        cellCounter++;
+        col++;
+    }
+    if (col < _numberOfColumns-1) {
+        point.x = col;
+        [self putColumnGoingUpAt:point columnLength:numberOfCells+1];
+    }
+}
 
 -(void)insertGliderGunAtPoint:(CGPoint)point
 {
